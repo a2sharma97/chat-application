@@ -29,12 +29,12 @@ const userSchema = new Schema(
     },
     profilePicture: {
       type: String,
-      required: true,
       default: "",
     },
     password: {
       type: String,
       required: true,
+      trim: true,
     },
     gender: {
       type: String,
@@ -55,7 +55,7 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-userSchema.methods.ispasswordCorrect = async function (password) {
+userSchema.methods.isPasswordCorrect = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 

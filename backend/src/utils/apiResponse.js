@@ -7,4 +7,5 @@ class ApiResponse {
   }
 }
 
+// console.log(typeof ApiResponse); //its a fns
 export { ApiResponse };
