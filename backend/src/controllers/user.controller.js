@@ -66,7 +66,7 @@ const registerUser = asyncHandler(async (req, res) => {
     fullName,
     profilePicture: profilePictureLocalPath
       ? profilePicture.url
-      : gender === "MALE"
+      : gender === "male"
         ? maleProfile
         : femaleProfile,
     email,
