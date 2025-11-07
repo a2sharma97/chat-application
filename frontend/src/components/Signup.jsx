@@ -1,24 +1,49 @@
+import axios from "axios";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-//2 45
+import toast from "react-hot-toast";
+import { Link, useNavigate } from "react-router-dom";
+
 const Signup = () => {
   const [user, setUser] = useState({
     fullName: "",
     username: "",
+    email: "",
     password: "",
     confirmPassword: "",
     gender: "",
   });
 
+  const navigate = useNavigate();
+
   const handleCheckbox = (gender) => {
     setUser({ ...user, gender });
   };
 
-  const onSubmitHandler = (e) => {
+  const onSubmitHandler = async (e) => {
     e.preventDefault();
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/v1/users/register",
+        user,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      if (response.data.success) {
+        toast.success(response.data.message);
+        navigate("/");
+      }
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+
     setUser({
       fullName: "",
       username: "",
+      email: "",
       password: "",
       confirmPassword: "",
       gender: "",
@@ -32,7 +57,7 @@ const Signup = () => {
           Signup
         </h1>
         <form onSubmit={onSubmitHandler} action="">
-          <div className="mb-3 sm:mb-4">
+          <div className="mb-2 sm:mb-1">
             <label className="label p-1 sm:p-2">
               <span className="text-sm sm:text-base label-text">FullName</span>
             </label>
@@ -44,7 +69,7 @@ const Signup = () => {
               placeholder="fullname"
             />
           </div>
-          <div className="mb-3 sm:mb-4">
+          <div className="mb-2 sm:mb-1">
             <label className="label p-1 sm:p-2">
               <span className="text-sm sm:text-base label-text">Username</span>
             </label>
@@ -56,7 +81,19 @@ const Signup = () => {
               placeholder="username"
             />
           </div>
-          <div className="mb-3 sm:mb-4">
+          <div className="mb-2 sm:mb-1">
+            <label className="label p-1 sm:p-2">
+              <span className="text-sm sm:text-base label-text">Email</span>
+            </label>
+            <input
+              type="text"
+              value={user.email}
+              onChange={(e) => setUser({ ...user, email: e.target.value })}
+              className="w-full input input-bordered h-9 sm:h-10 focus:outline-none focus:ring-2 focus:ring-black"
+              placeholder="email"
+            />
+          </div>
+          <div className="mb-2 sm:mb-1">
             <label className="label p-1 sm:p-2">
               <span className="text-sm sm:text-base label-text">Password</span>
             </label>
@@ -68,7 +105,7 @@ const Signup = () => {
               placeholder="password"
             />
           </div>
-          <div className="mb-3 sm:mb-4">
+          <div className="mb-2 sm:mb-1">
             <label className="label p-1 sm:p-2">
               <span className="text-sm sm:text-base label-text">
                 Confirm password
@@ -89,8 +126,8 @@ const Signup = () => {
               <p className="text-sm sm:text-base">Male</p>
               <input
                 type="checkbox"
-                checked={user.gender === "male"}
-                onChange={() => handleCheckbox("male")}
+                checked={user.gender === "MALE"}
+                onChange={() => handleCheckbox("MALE")}
                 defaultChecked
                 className="checkbox checkbox-sm sm:checkbox-md mx-2"
               />
@@ -99,8 +136,8 @@ const Signup = () => {
               <p className="text-sm sm:text-base">Female</p>
               <input
                 type="checkbox"
-                checked={user.gender === "female"}
-                onChange={() => handleCheckbox("female")}
+                checked={user.gender === "FEMALE"}
+                onChange={() => handleCheckbox("FEMALE")}
                 className="checkbox checkbox-sm sm:checkbox-md mx-2"
               />
             </div>
