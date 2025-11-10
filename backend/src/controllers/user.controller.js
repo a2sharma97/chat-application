@@ -66,12 +66,12 @@ const registerUser = asyncHandler(async (req, res) => {
     fullName,
     profilePicture: profilePictureLocalPath
       ? profilePicture.url
-      : gender === "male"
+      : gender.toUpperCase() === "MALE"
         ? maleProfile
         : femaleProfile,
     email,
     password,
-    gender,
+    gender: gender.toUpperCase(),
     username: username.toLowerCase(),
   });
 
