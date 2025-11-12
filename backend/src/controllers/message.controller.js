@@ -1,6 +1,5 @@
 import { Conversation } from "../models/conversation.model.js";
 import { Message } from "../models/message.model.js";
-import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
@@ -32,19 +31,20 @@ const sendMessage = asyncHandler(async (req, res) => {
 
   await gotConversation.save({ validateBeforeSave: false });
 
-  res.status(201).json(new ApiResponse(201, gotConversation, "Message sent"));
+  res.status(201).json(new ApiResponse(201, newMessage, "Message sent"));
 });
 
 const getMessage = asyncHandler(async (req, res) => {
   const receiverId = req.params.id;
   const senderId = req.user?._id;
 
+  // console.log("getMessage: senderId=", senderId, "receiverId=", receiverId);
   const conversation = await Conversation.findOne({
     participants: { $all: [senderId, receiverId] },
   }).populate("messages");
 
   if (!conversation) {
-    throw new ApiError(401, "No message received");
+    return res.status(200).json(new ApiResponse(200, [], "No messages yet"));
   }
 
   res
