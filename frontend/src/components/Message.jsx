@@ -1,14 +1,13 @@
 import { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-// 5 06
 
 const Message = ({ msg }) => {
-  // const { authUser } = useSelector((store) => store.user);
   const scroll = useRef();
-  const { authUser } = useSelector((store) => store.user);
+  const { authUser, selectedUser } = useSelector((store) => store.user);
   useEffect(() => {
     scroll.current?.scrollIntoView({ behavior: "smooth" });
   }, [msg]);
+  // console.log("authUserId ", authUser?._id);
   return (
     <div>
       <div
@@ -20,8 +19,12 @@ const Message = ({ msg }) => {
         <div className="chat-image avatar">
           <div className="w-10 rounded-full">
             <img
-              alt="Tailwind CSS chat bubble component"
-              src="https://img.daisyui.com/images/profile/demo/kenobee@192.webp"
+              alt="profile picture"
+              src={
+                msg?.senderId === authUser?._id
+                  ? authUser?.profilePicture
+                  : selectedUser?.profilePicture
+              }
             />
           </div>
         </div>

@@ -1,5 +1,6 @@
 import { Conversation } from "../models/conversation.model.js";
 import { Message } from "../models/message.model.js";
+import { getReceiverSocketId, io } from "../socket/socket.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
@@ -29,7 +30,15 @@ const sendMessage = asyncHandler(async (req, res) => {
     gotConversation.messages.push(newMessage._id);
   }
 
-  await gotConversation.save({ validateBeforeSave: false });
+  await Promise.all([
+    gotConversation.save({ validateBeforeSave: false }),
+    newMessage.save({ validateBeforeSave: false }),
+  ]);
+
+  const receiverSocketId = getReceiverSocketId(receiverId);
+  if (receiverSocketId) {
+    io.to(receiverSocketId).emit("newMessage", newMessage);
+  }
 
   res.status(201).json(new ApiResponse(201, newMessage, "Message sent"));
 });

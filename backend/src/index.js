@@ -1,18 +1,18 @@
 import dotenv from "dotenv";
-import app from "./app.js";
-import connectDB from "./db/index.js";
-
 dotenv.config({
   path: "./.env",
 });
 
+import connectDB from "./db/index.js";
+import { server } from "./socket/socket.js";
+
 connectDB()
   .then(() => {
-    app.on("error", (error) => {
+    server.on("error", (error) => {
       console.log("Application is unable to connect database", error);
       throw error;
     });
-    app.listen(process.env.PORT || 8080, () => {
+    server.listen(process.env.PORT || 8080, () => {
       console.log(`Server listen at port ${process.env.PORT}`);
     });
   })
